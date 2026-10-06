@@ -1,11 +1,18 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-void print_distances(float distances[], int days)
+struct WalkDataRecord
+{
+   int day;
+   float distance;
+};
+
+void print_distances(const struct WalkDataRecord records[], int days)
 {
    printf("Distances walked each day:\n");
    for (int i = 0; i < days; i++)
    {
-      printf("Day %d: %.2f kilometers\n", i + 1, distances[i]);
+      printf("|Day %4d| %8.2f kilometers|\n", records[i].day, records[i].distance);
    }
 }
 
@@ -15,36 +22,38 @@ int main()
    float walk_distance;
    float total_distance = 0;
    float max_distance = 0;
-   int max_day = 0;
-   float per_distance[100]; // Array to store distances for each day
+   int max_day;
    char response;
-   
-   
-    
+  
    printf("Enter the number of days you walked: ");
-   scanf("%d", &walk_days);
 
-   if (walk_days <= 0)
+   if (scanf("%d",&walk_days) != 1 || walk_days <= 0 || walk_days > 1000)
    {
-      printf("Please enter a positive number of days.\n");
+      printf("Please enter a positive number of days (up to 1000).\n");
       return 1; 
    }
-  
-   
-   for (int i = 1; i <= walk_days; i++)
+
+   struct WalkDataRecord *records = malloc(sizeof(struct WalkDataRecord) * walk_days);
+   if (records == NULL)
    {
-      printf("Enter the distance walked on day %d (in kilometers): ", i);
-      scanf("%f", &walk_distance);
-      
-      if (walk_distance < 0 || walk_distance > 1000)
+      printf("Memory allocation failed.\n");
+      return 1; 
+   }
+
+   for (int i = 0; i < walk_days; i++)
+   {
+      printf("Enter the distance walked on day %d (in kilometers): ", i + 1);
+
+      if (scanf("%f", &walk_distance) != 1 || walk_distance < 0 || walk_distance > 1000)
       {
-         printf("The number cannot be negative.\n");
+         printf("The number cannot be negative or exceed 1000.\n");
+         free(records); // Free the allocated memory
          return 1; 
       }
-      per_distance[i - 1] = walk_distance; // Store the distance in the array 
+      records[i].distance = walk_distance;
       total_distance += walk_distance;
       
-      if (walk_distance > max_distance)
+      if (i == 1 || walk_distance > max_distance)
       {
          max_distance = walk_distance;
          max_day = i;
@@ -63,10 +72,10 @@ int main()
    
    if (response == 'y' || response == 'Y')
    {
-      printf("Distances walked each day:\n");
       print_distances(per_distance, walk_days);
    }
 
+   free(per_distance); // Free the allocated memory
    return 0;
 }
 
