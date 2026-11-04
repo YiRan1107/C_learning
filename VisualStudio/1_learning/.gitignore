@@ -1,0 +1,13 @@
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.user
+*.suo
+*.exe
+*.obj
+*.pdb
+*.ilk
+*.tlog/
+session-state/
